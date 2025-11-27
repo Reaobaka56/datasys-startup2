@@ -1,0 +1,5 @@
+{
+  "name": "DataAnalytics Pro",
+  "description": "A client-side data analytics dashboard that allows users to upload CSV files, visualize data with interactive charts, calculate statistics, and gain AI-powered insights using the Gemini API.",
+  "requestFramePermissions": []
+}
