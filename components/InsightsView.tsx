@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { DataSet, ColumnStats } from '../types';
 import { calculateStats } from '../utils/stats';
-import { generateInsights } from '../services/geminiService';
 import { dbService } from '../services/dbService';
-import { Sparkles, Play, RefreshCw, Save, Check } from 'lucide-react';
+import { Sparkles, Save, Check } from 'lucide-react';
 
 interface InsightsViewProps {
   dataSet: DataSet;
@@ -11,23 +10,8 @@ interface InsightsViewProps {
 
 export const InsightsView: React.FC<InsightsViewProps> = ({ dataSet }) => {
   const [insights, setInsights] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-
-  const handleAnalyze = async () => {
-    setIsLoading(true);
-    setSaveSuccess(false);
-    
-    // Filter out nulls safely
-    const stats: ColumnStats[] = dataSet.numericColumns
-      .map(col => calculateStats(dataSet.data, col))
-      .filter((stat): stat is ColumnStats => stat !== null);
-    
-    const result = await generateInsights(dataSet, stats);
-    setInsights(result);
-    setIsLoading(false);
-  };
 
   const handleSave = async () => {
     if (!insights) return;
@@ -61,32 +45,10 @@ export const InsightsView: React.FC<InsightsViewProps> = ({ dataSet }) => {
                     AI Analyst
                 </h2>
                 <p className="text-indigo-100 max-w-xl">
-                    Use Gemini 2.5 Flash to generate a professional summary, detect anomalies, and suggest business questions based on your dataset.
+                    Generate a professional summary and detect anomalies in your dataset.
                 </p>
             </div>
-            <button
-                onClick={handleAnalyze}
-                disabled={isLoading}
-                className={`
-                    px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center transition-all border border-white/20
-                    ${isLoading 
-                        ? 'bg-white/20 cursor-not-allowed text-white' 
-                        : 'bg-white text-indigo-600 hover:bg-indigo-50 hover:shadow-xl transform hover:-translate-y-0.5'
-                    }
-                `}
-            >
-                {isLoading ? (
-                    <>
-                        <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
-                        Analyzing...
-                    </>
-                ) : (
-                    <>
-                        <Play className="w-5 h-5 mr-2 fill-current" />
-                        {insights ? 'Re-Analyze' : 'Generate Insights'}
-                    </>
-                )}
-            </button>
+
         </div>
       </div>
 
